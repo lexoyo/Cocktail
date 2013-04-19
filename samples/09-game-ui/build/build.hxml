@@ -1,0 +1,4 @@
+-swf ../bin/Main.swf
+-cp ../src/
+-main Game
+-swf-header 200:300:60:FF0000
