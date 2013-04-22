@@ -28,10 +28,7 @@ class Game
 	 */
 	static function main() 
 	{
-		trace("New game !");
-		new Game(Lib.current, "https://si0.twimg.com/profile_images/1864751891/Gym-Ball.jpg");
-		//new Game(Lib.current, 400, 400, "http://michaelreid.typepad.com/.a/6a00e54edabd838833011168a00f09970c-800wi");
-		//new Game(Lib.current, 400, 400, "ball1.jpg");
+		new Game(Lib.current, "ball1.jpg");
 	}
 	/** 
 	 * constructor
@@ -55,7 +52,8 @@ class Game
 			{x:Math.round(sceneWidth/2), y:0}, 
 			{x:0, y:0}, 
 			{x:10, y:0}, 
-			{x:0, y:1}
+			{x:0, y:1},
+			1
 		);
 
 		// keep a reference to the game container
@@ -84,27 +82,31 @@ class Game
 		}
 
 		// detect collisions left
-		if (ball.x < 0)
+		var left = ball.x - ball.size.x / 2;
+		if (left < 0)
 		{
-			ball.x = 0;
+			ball.x = ball.size.x / 2;
 			ball.speed.x = -ball.speed.x;
 		}
 		// detect collisions right
-		if (ball.x + ball.width > sceneWidth)
+		var right = ball.x + ball.size.x / 2;
+		if (right > sceneWidth)
 		{
-			ball.x = sceneWidth - ball.width;
+			ball.x = sceneWidth - ball.size.x / 2;
 			ball.speed.x = -ball.speed.x;
 		}
 		// detect collisions top
-		if (ball.y < 0)
+		var top = ball.y - ball.size.y / 2;
+		if (top < 0)
 		{
-			ball.y = 0;
+			ball.y = ball.size.y / 2;
 			ball.speed.y = -ball.speed.y;
 		}
 		// detect collisions bottom
-		if (ball.y + ball.height > sceneHeight)
+		var bottom = ball.y + ball.size.y / 2;
+		if (bottom > sceneHeight)
 		{
-			ball.y = sceneHeight - ball.height;
+			ball.y = sceneHeight - ball.size.y / 2;
 			ball.speed.y = -ball.speed.y;
 		}
 		// move the ball

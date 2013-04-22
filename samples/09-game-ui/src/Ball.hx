@@ -20,21 +20,30 @@ class Ball extends Sprite
 	/**
 	 * ball physical property
 	 */
-	public var speed:Ball.XYPoint;
+	public var speed:XYPoint;
 	/**
 	 * ball physical property
 	 */
-	public var accel:Ball.XYPoint;
+	public var accel:XYPoint;
+	/**
+	 * ball physical property
+	 */
+	public var angularSpeed:Float;
 	/**
 	 * ball physical property
 	 * also stands for the weight
 	 */
-	public var gravity:Ball.XYPoint;
+	public var gravity:XYPoint;
+	/**
+	 * dimension of the loaded image
+	 * considered to be the dimensions of the ball
+	 */
+	public var size:XYPoint;
 	/** 
 	 * constructor
 	 * load the image and setup the ball
 	 */
-	public function new(imageUrl:String, position:XYPoint, speed:XYPoint, accel:XYPoint, gravity:XYPoint) 
+	public function new(imageUrl:String, position:XYPoint, speed:XYPoint, accel:XYPoint, gravity:XYPoint, angularSpeed:Float) 
 	{
 		super();
 
@@ -49,8 +58,12 @@ class Ball extends Sprite
 		this.x = position.x;
 		this.y = position.y;
 		this.speed = speed;
+		this.angularSpeed = angularSpeed;
 		this.accel = accel;
 		this.gravity = gravity;
+
+		// size
+		size = {x:0,y:0};
 	}
 	/**
 	 * callback for the loader
@@ -58,10 +71,12 @@ class Ball extends Sprite
 	function onLoad(event:Event) 
 	{
 		trace("onLoad "+event);
-
-		// apply size
-		width = 200;
-		height = 200;
+		size = {
+			x : event.target.width,
+			y : event.target.height,
+		};
+		event.target.content.x = -event.target.width/2;
+		event.target.content.y = -event.target.height/2;
 	}
 	/**
 	 * game loop
@@ -78,5 +93,7 @@ class Ball extends Sprite
 		// reset accel
 		accel.x = 0;
 		accel.y = 0;
+		// angular speed
+		rotation += angularSpeed;
 	}
 }

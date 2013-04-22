@@ -1,4 +1,8 @@
+-main Main
+-cp ../src
+-cp ../../../
+-lib cocktail
 -swf ../bin/Main.swf
--cp ../src/
--main Game
+-swf-version 10.2
+--remap js:cocktail
 -swf-header 200:300:60:FF0000

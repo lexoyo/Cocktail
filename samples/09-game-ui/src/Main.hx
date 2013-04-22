@@ -22,10 +22,7 @@ class Main extends Sprite
 	 */
 	static function main() 
 	{
-		trace("New game !");
-		new Game(Lib.current, "https://si0.twimg.com/profile_images/1864751891/Gym-Ball.jpg");
-		//new Game(Lib.current, 400, 400, "http://michaelreid.typepad.com/.a/6a00e54edabd838833011168a00f09970c-800wi");
-		//new Game(Lib.current, 400, 400, "ball1.jpg");
+		new Main();
 	}
 	
 	/**
@@ -38,11 +35,15 @@ class Main extends Sprite
 	 */
 	var mc:Sprite;
 	
+	/**
+	 * flash game object
+	 */
+	var game:Game;
+	
 	var resizeCallbacks : List<Void->Void>;
 	public function new()
 	{
 		super();
-		resizeCallbacks = new List();
 		addEventListener( flash.events.Event.ADDED_TO_STAGE, onAdded );
 	}
 
@@ -54,6 +55,7 @@ class Main extends Sprite
 
 		removeEventListener(flash.events.Event.ADDED_TO_STAGE, onAdded);
 		stage.addEventListener(flash.events.Event.RESIZE, resize);
+
 		#if ios
 		haxe.Timer.delay(init, 100); // iOS 6
 		#else
@@ -66,9 +68,9 @@ class Main extends Sprite
 	{
 		//reset();
 		if (!inited) init();
-		// else (resize or orientation change)
-		for( cb in resizeCallbacks )
-			cb();
+		mc.width = stage.stageWidth;
+		mc.height = stage.stageHeight;
+		updateViewportPosition();
 	}
 
 	function init()
@@ -77,12 +79,6 @@ class Main extends Sprite
 		initFlash();
 		initCocktailView();
 	}
-	
-	function registerResizable( cb : Void->Void )
-	{
-		resizeCallbacks.add( cb );
-		return cb;
-	}
 
 	/**
 	 * build flash interface
@@ -90,45 +86,20 @@ class Main extends Sprite
 	function initFlash()
 	{
 		mc = new Sprite();
-		
-		var txt = new flash.text.TextField();
-		txt.width = 200;
-		txt.text = "This is a flash Sprite and TextField";
-		
-		mc.addChild(txt);
-		
-		var button = new Sprite();
-		button.graphics.beginFill(0xDDDDDD, 1.0);
-		button.graphics.drawRect(0, 0, 200, 200);
-		button.graphics.endFill();
-		
-		function updateButtonPosition()
-		{
-			button.x = (stage.stageWidth / 2 - button.width) / 2;
-			button.y = stage.stageHeight / 2 - 100;
-		}
-		registerResizable( updateButtonPosition )();
-
-		mc.addChild(button);
-		
-		var label = new TextField();
-		label.text = "Click to show/hide cocktail view";
-		label.width = 200;
-		button.addChild(label);
-		
-		button.addEventListener(flash.events.MouseEvent.CLICK, onFlashClick);
-		
-		flash.Lib.current.addChild(mc);
+		game = new Game(mc, "ball1.jpg");
 	}
-	
 	/**
-	 * toggle cocktail view visibility
-	 */
-	function onFlashClick(e)
+	 * place the webview in the flash/NME app
+	 */	
+	function updateViewportPosition()
 	{
-		cv.root.visible = !cv.root.visible;
+		cv.viewport = { 
+			x:Std.int(stage.stageWidth / 2),
+			y:0,
+			width:Std.int(stage.stageWidth / 2),
+			height:stage.stageHeight
+		};
 	}
-	
 	/**
 	 * build cocktail interface
 	 */
@@ -137,20 +108,10 @@ class Main extends Sprite
 		//build a cocktail webview
 		cv = new CocktailView();
 		
-		function updateViewportPosition()
-		{
-			//place the webview in the flash/NME app
-			cv.viewport = { 
-				x:Std.int(stage.stageWidth / 2),
-				y:0,
-				width:Std.int(stage.stageWidth / 2),
-				height:stage.stageHeight
-				};
-		}
-		registerResizable( updateViewportPosition )();
+		updateViewportPosition();
 		
 		//use an external html for the document
-		cv.loadURL("index.html");
+		cv.loadURL("game-ui.html");
 		
 		//wait for document ready
 		cv.window.onload = function(e) { 
