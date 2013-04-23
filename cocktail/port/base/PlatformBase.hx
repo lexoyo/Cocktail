@@ -125,6 +125,21 @@ class PlatformBase
 		touchListener = new TouchListener(cast(this));
 	}
 	
+	/**
+	 * clean up method
+	 */
+	public function dispose():Void
+	{
+		removeNativeListeners();
+		
+		mouse.dispose();
+		mouse = null;
+		keyboard.dispose();
+		keyboard = null;
+		touchListener.dispose();
+		touchListener = null;
+	}
+	
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	//////////////////////////////////////////////////////////////////////////////////////////

@@ -116,6 +116,29 @@ class Platform extends PlatformBase
 	}
 	
 	/**
+	 * clean up method
+	 */
+	override public function dispose():Void
+	{
+		super.dispose();
+		
+		if (_rootSprite.parent != null)
+		{
+			_rootSprite.parent.removeChild(_rootSprite);
+		}
+		
+		if (_nativeLayersRootSprite.parent != null)
+		{
+			_nativeLayersRootSprite.parent.removeChild(_nativeLayersRootSprite);
+		}
+		
+		if (hitTestingSprite.parent != null)
+		{
+			hitTestingSprite.parent.removeChild(hitTestingSprite);
+		}
+	}
+	
+	/**
 	 * Init the flash display list used
 	 * for cocktail document
 	 */
@@ -136,7 +159,6 @@ class Platform extends PlatformBase
 		else
 		{
 			hitTestingSprite = _nativeLayersRootSprite;
-			//_rootSprite.addChild(hitTestingSprite);
 			_rootSprite.addChild(_nativeLayersRootSprite);
 		}
 	}
