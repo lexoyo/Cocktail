@@ -6,33 +6,33 @@
 	example
 */
 
-body {
-	background-color:rgba(125,125,125,0.0);
-	color:white;
-	font-family:sans-serif;
-	border-left:black solid thin;
+.container {
+    background-color: rgba(180, 180, 180, 0.5);
+    border: thin solid black;
+    bottom: 10px;
+    color: #333333;
+    font-family: sans-serif;
+    width: 50%;
+    max-width: 400px;
+    min-width: 200px;
+    padding: 20px;
+    position: fixed;
+    top: 10px;
 }
-
-h3:hover {
-	background-color:rgba(125,125,125,1.0);
+.block{
+	float: left;
+	margin: 0 20px 0 0;
 }
-
-#button {
-	padding:10px;
-	width:200px;
-	height:180px;
-	position:fixed;
-	background:rgb(200,200,200);
-	top:50%;
-	margin-top:-100px;
+.category h2{
+    margin: 0;
+    padding: 20px 0 0;
+ }
+.category{
+	clear: both;
+}
+input[type=number]{
+	width: 50px;
+}
+input.center {
 	left:50%;
-	margin-left:-100px;
-}
-
-#button:hover {
-	background:rgb(180,180,180);
-}
-
-#button:active {
-	background:rgb(160,160,160);
 }

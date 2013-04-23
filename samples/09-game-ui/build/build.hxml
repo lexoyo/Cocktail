@@ -4,4 +4,4 @@
 -swf ../bin/Main.swf
 -swf-version 10.2
 --remap js:cocktail
--swf-header 200:300:60:FF0000
+-swf-header 200:300:60:FFFFFF

@@ -42,8 +42,9 @@ class Main extends Sprite
 	
 	var resizeCallbacks : List<Void->Void>;
 	public function new()
-	{trace("new");
+	{
 		super();
+		haxe.Firebug.redirectTraces();
 		addEventListener( flash.events.Event.ADDED_TO_STAGE, onAdded );
 	}
 
@@ -97,7 +98,7 @@ class Main extends Sprite
 		cv.viewport = { 
 			x:0,
 			y:0,
-			width:Std.int(stage.stageWidth / 2),
+			width:stage.stageWidth,
 			height:stage.stageHeight
 		};
 	}
@@ -119,19 +120,77 @@ class Main extends Sprite
 		//wait for document ready
 		cv.window.onload = function(e) { 
 			
-			var document = cv.document;
-			
-			//access to DOM
-			var button = document.getElementById("button");
-			button.onclick = function(e) {
-				//toggle flash interface visibility
-				//mc.visible = !mc.visible;
-				game.ball.gravity.x = -game.ball.gravity.x;
-				game.ball.gravity.y = -game.ball.gravity.y;
-			}
-			
 			//attach cocktail root to native flash root
 			flash.Lib.current.addChild(cv.root);
+
+			// add the logic to the UIs
+			initUIs();
 		};
+	}
+	/**
+	 * init the UI after the html is loaded
+	 */
+	function refresh() 
+	{
+		cast(cv.document.getElementById("gravityValueX")).value = game.ball.gravity.x;
+		cast(cv.document.getElementById("gravityValueY")).value = game.ball.gravity.y;
+	}
+	/**
+	 * init the UI after the html is loaded
+	 */
+	function initUIs() 
+	{
+		refresh();
+
+		//access to DOM
+		var button = cv.document.getElementById("inverseGravity");
+		button.onclick = inverseGravity;
+
+		var button = cv.document.getElementById("stopBall");
+		button.onclick = stopBall;
+
+		var text = cv.document.getElementById("gravityValueX");
+		text.oninput = gravityValueXChanged;
+
+		var text = cv.document.getElementById("gravityValueY");
+		text.oninput = gravityValueYChanged;
+	}
+	/**
+	 * callback for the html element
+	 */
+	function gravityValueXChanged(event:js.Dom.Event) 
+	{
+		var value:String = cast(event.target).value;
+		trace(event.target+" - "+value);
+		game.ball.gravity.x = Std.parseFloat(value);
+	}
+	/**
+	 * callback for the html element
+	 */
+	function gravityValueYChanged(event:js.Dom.Event) 
+	{
+		var value:String = cast(event.target).value;
+		trace(event.target+" - "+value);
+		game.ball.gravity.y = Std.parseFloat(value);
+	}
+	/**
+	 * callback for the html element
+	 */
+	function inverseGravity(event:js.Dom.Event) 
+	{
+		event.preventDefault();
+		game.ball.gravity.x = -game.ball.gravity.x;
+		game.ball.gravity.y = -game.ball.gravity.y;
+		refresh();
+	}
+	/**
+	 * callback for the html element
+	 */
+	function stopBall(event:js.Dom.Event) 
+	{
+		event.preventDefault();
+		game.ball.speed.x = 0;
+		game.ball.speed.y = 0;
+		refresh();
 	}
 }

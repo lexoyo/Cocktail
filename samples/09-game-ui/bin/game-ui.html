@@ -1,11 +1,28 @@
 <html>
 	<head>
 		<!-- this import a default style sheet you can use for your project -->
+		<link type="text/css" href="sober/style.css" rel="stylesheet"></link>
 		<link type="text/css" href="style.css" rel="stylesheet"></link>
 		<title>Cocktail UI for the game</title>
 	</head>
 	<body>
-		<h4>This is a Cocktail html document embedded in a flash/NME app</h4>
-		<div id="button">Click to show/hide the flash game</div>
+		<div class="container">
+			<div class="category">
+				<h2>Gravity</h2>
+				<div class="block">
+					<p>Gravity value X</p>
+					<input type="number" name="name" id="gravityValueX" />
+				</div>
+				<div class="block">
+					<p>Gravity value Y</p>
+					<input type="number" name="name" id="gravityValueY" />
+				</div>
+			</div>
+			<div class="category">
+				<h2>Push-buttons tests</h2>			
+				<input type="submit" id="inverseGravity" class="center" value="inverse!" />
+				<input type="submit" id="stopBall" class="center" value="stop!" />
+			</div>
+		</div>
 	</body>
 </html>
