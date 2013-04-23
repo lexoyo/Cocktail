@@ -22,7 +22,7 @@ class Main extends Sprite
 	 */
 	static function main() 
 	{
-		new Main();
+		flash.Lib.current.addChild( new Main() );
 	}
 	
 	/**
@@ -42,13 +42,13 @@ class Main extends Sprite
 	
 	var resizeCallbacks : List<Void->Void>;
 	public function new()
-	{
+	{trace("new");
 		super();
 		addEventListener( flash.events.Event.ADDED_TO_STAGE, onAdded );
 	}
 
 	function onAdded(_)
-	{
+	{trace("onAdded");
 
 		stage.align = flash.display.StageAlign.TOP_LEFT;
 		stage.scaleMode = flash.display.StageScaleMode.NO_SCALE;
@@ -68,13 +68,13 @@ class Main extends Sprite
 	{
 		//reset();
 		if (!inited) init();
-		mc.width = stage.stageWidth;
-		mc.height = stage.stageHeight;
+
 		updateViewportPosition();
+		game.setSize(stage.stageWidth, stage.stageHeight);
 	}
 
 	function init()
-	{
+	{trace("init");
 		inited = true;
 		initFlash();
 		initCocktailView();
@@ -84,17 +84,18 @@ class Main extends Sprite
 	 * build flash interface
 	 */
 	function initFlash()
-	{
+	{trace("initFlash");
 		mc = new Sprite();
-		game = new Game(mc, "ball1.jpg");
+		game = new Game(mc, "ball1.jpg", stage.stageWidth, stage.stageHeight);
+		flash.Lib.current.addChild(mc);
 	}
 	/**
 	 * place the webview in the flash/NME app
 	 */	
 	function updateViewportPosition()
-	{
+	{trace("updateViewportPosition "+stage.stageWidth);
 		cv.viewport = { 
-			x:Std.int(stage.stageWidth / 2),
+			x:0,
 			y:0,
 			width:Std.int(stage.stageWidth / 2),
 			height:stage.stageHeight
@@ -105,6 +106,8 @@ class Main extends Sprite
 	 */
 	function initCocktailView()
 	{
+		trace("initCocktailView");
+
 		//build a cocktail webview
 		cv = new CocktailView();
 		
@@ -122,7 +125,9 @@ class Main extends Sprite
 			var button = document.getElementById("button");
 			button.onclick = function(e) {
 				//toggle flash interface visibility
-				mc.visible = !mc.visible;
+				//mc.visible = !mc.visible;
+				game.ball.gravity.x = -game.ball.gravity.x;
+				game.ball.gravity.y = -game.ball.gravity.y;
 			}
 			
 			//attach cocktail root to native flash root

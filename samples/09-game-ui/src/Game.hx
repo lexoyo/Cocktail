@@ -17,11 +17,17 @@ class Game
 	/**
 	 * the bouncing ball 
 	 */
-	private var ball:Ball;
+	public var ball:Ball;
 	/**
 	 * the game container
 	 */
 	private var gameContainer:Sprite;
+
+	/**
+	 * background used to set the size of the scene
+	 */
+	var bg:Sprite;
+	
 	/** 
 	 * main function to start the game on the stage with default params
 	 * for testing purpose, test the game standalone
@@ -34,22 +40,27 @@ class Game
 	 * constructor
 	 * load the assets and setup the game
 	 */
-	public function new(gameContainer:Sprite, imageUrl:String) 
+	public function new(gameContainer:Sprite, imageUrl:String, w:Int=100, h:Int=100) 
 	{
 		trace("new game "+gameContainer.width+", "+gameContainer.height);
 
 		// scene boundaries
-		var sceneWidth = gameContainer.width;
-		var sceneHeight = gameContainer.height;
+		var sceneWidth = w;
+		var sceneHeight = h;
 		if (gameContainer == Lib.current)
 		{trace("stage "+Lib.current.stage.stageHeight);
 			sceneWidth = Lib.current.stage.stageWidth;
 			sceneHeight = Lib.current.stage.stageHeight;
 		}
 
+		// background, used to set a size to the container
+		bg = new Sprite();
+		setSize(sceneWidth, sceneHeight);
+		gameContainer.addChild(bg);
+
 		// create the ball
 		ball = new Ball(imageUrl, 
-			{x:Math.round(sceneWidth/2), y:0}, 
+			{x:Math.round(sceneWidth/2), y:Math.round(sceneHeight/2)}, 
 			{x:0, y:0}, 
 			{x:10, y:0}, 
 			{x:0, y:1},
@@ -68,13 +79,23 @@ class Game
 		// timer.run = loop;
 	}
 	/**
+	 * set size of the scene
+	 */
+	public function setSize(w:Int, h:Int) 
+	{trace("setSize("+w+", "+h+")");
+		bg.graphics.clear();
+		bg.graphics.beginFill(0xFF6600, 0);
+		bg.graphics.drawRect(0, 0, w, h);
+		bg.graphics.endFill();
+	}
+	/**
 	 * game loop
 	 */
 	function loop(event:Event) 
 	{
 		// scene boundaries
-		var sceneWidth = gameContainer.width;
-		var sceneHeight = gameContainer.height;
+		var sceneWidth = bg.width;
+		var sceneHeight = bg.height;
 		if (gameContainer == Lib.current)
 		{
 			sceneWidth = Lib.current.stage.stageWidth;
