@@ -1,9 +1,10 @@
 /*
-	This file is part of Cocktail http://www.silexlabs.org/groups/labs/cocktail/
-	This project is © 2010-2011 Silex Labs and is released under the GPL License:
-	This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License (GPL) as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. 
-	This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-	To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ * Cocktail, HTML rendering engine
+ * http://haxe.org/com/libs/cocktail
+ *
+ * Copyright (c) Silex Labs
+ * Cocktail is available under the MIT license
+ * http://www.silexlabs.org/labs/cocktail-licensing/
 */
 package cocktail.core.html;
 import cocktail.core.css.CSSConstants;
@@ -116,7 +117,7 @@ class HTMLLinkElement extends HTMLElement
 	 * to the DOM, the link element
 	 * tries to load its linked resource
 	 */
-	override public function addedToDOM():Void
+	override private function addedToDOM():Void
 	{
 		if (_hasLoadedResource == false)
 		{	
@@ -130,7 +131,7 @@ class HTMLLinkElement extends HTMLElement
 	 * the DOM, the link dispose of its
 	 * linked resource as needed
 	 */
-	override public function removedFromDOM():Void
+	override private function removedFromDOM():Void
 	{
 		super.removedFromDOM();
 		if (_hasLoadedResource == true)
@@ -177,7 +178,11 @@ class HTMLLinkElement extends HTMLElement
 			var nativeHttp:NativeHttp = new NativeHttp(_ownerHTMLDocument.timer);
 			nativeHttp.addEventListener(EventConstants.LOAD, onCSSLoaded);
 			nativeHttp.addEventListener(EventConstants.ERROR, onCSSLoadError);
-			nativeHttp.load(href, HTTPConstants.GET, null, null, DataFormatValue.TEXT);
+			
+			//convert to absolute url if needed before loading
+			var absoluteHref:String = _ownerHTMLDocument.getAbsoluteURL(href);
+			
+			nativeHttp.load(absoluteHref, HTTPConstants.GET, null, null, DataFormatValue.TEXT);
 		}
 	}
 	

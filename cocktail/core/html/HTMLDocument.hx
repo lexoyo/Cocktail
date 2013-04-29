@@ -39,6 +39,7 @@ import cocktail.core.html.HTMLInputElement;
 import cocktail.core.invalidation.InvalidationManager;
 import cocktail.core.layout.floats.FloatsManager;
 import cocktail.core.layout.LayoutManager;
+import cocktail.core.location.Location;
 import cocktail.core.multitouch.MultiTouchManager;
 import cocktail.core.parser.DOMParser;
 import cocktail.core.renderer.ElementRenderer;
@@ -48,6 +49,7 @@ import cocktail.core.parser.ParserData;
 import cocktail.core.event.FocusEvent;
 import cocktail.core.resource.ResourceManager;
 import cocktail.core.timer.Timer;
+import cocktail.core.url.URL;
 import cocktail.core.window.Window;
 import cocktail.Lib;
 import cocktail.core.graphics.GraphicsContext;
@@ -275,6 +277,11 @@ class HTMLDocument extends Document
 	 */
 	public var cascadeManager(default, null):CascadeManager;
 		
+	/**
+	 * holds the location of this document
+	 */
+	public var location(default, null):Location;
+	
    /**  	
 	* getter/setter to set the whole document content with an  	
 	* html string or to serialise the whole document into
@@ -318,6 +325,8 @@ class HTMLDocument extends Document
 		_lastTouchStartPosition = null;
 		layoutManager.dispose();
 		layoutManager = null;
+		location.dispose();
+		location = null;
 		
 		if (documentElement != null)
 		{
@@ -338,9 +347,11 @@ class HTMLDocument extends Document
 		resourceManager = new ResourceManager(this);
 		transitionManager = new TransitionManager(this);
 		
+		location = new Location(this);
+		location.onLocationChanged = onLocationChanged;
+		
 		initStyleManager();
 		invalidationManager = new InvalidationManager(this);
-		
 		
 		cascadeManager = new CascadeManager();
 		
@@ -490,10 +501,7 @@ class HTMLDocument extends Document
 	{	
 		_delayLoadEventCounter--;
 		
-		if (_delayLoadEventCounter == 0 && _documentLoaded == false)
-		{
-			onDocumentLoaded();
-		}
+		checkifDocumentLoaded();
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -516,6 +524,18 @@ class HTMLDocument extends Document
 		window.dispatchEvent(event);
 	}
 	
+	/**
+	 * check wether all elements delaying the load event 
+	 * are done
+	 */
+	private function checkifDocumentLoaded()
+	{
+		if (_delayLoadEventCounter == 0 && _documentLoaded == false)
+		{
+			onDocumentLoaded();
+		}
+	}
+	
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// PUBLIC STYLE MANAGER METHODS
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -527,9 +547,17 @@ class HTMLDocument extends Document
 	 */
 	public function addStyleSheet(stylesheet:CSSStyleSheet):Void
 	{
-		_styleManager.addStyleSheet(stylesheet);
-		documentElement.invalidateStyleDeclaration(true);
-		documentElement.cascade(cascadeManager, false);
+		_styleManager.addStyleSheet(stylesheet); 
+		
+		//document element might be null at this point. 
+		//for instance if the added stylsheet is inline (style tag)
+		//during document parsing
+		if (documentElement != null)
+		{
+			documentElement.invalidateStyleDeclaration(true);
+			documentElement.cascade(cascadeManager, false);
+		}
+		
 	}
 	
 	/**
@@ -674,6 +702,10 @@ class HTMLDocument extends Document
 		var node:HTMLElement = DOMParser.parse(value, this);
 		documentElement = node;
 		initBody(cast(documentElement.getElementsByTagName(HTMLConstants.HTML_BODY_TAG_NAME)[0]));
+		
+		//check if document can dispatch load event instantly,
+		//if no element is delaying the load of the document
+		checkifDocumentLoaded();
 		
 		return value;
 	}
@@ -1050,6 +1082,48 @@ class HTMLDocument extends Document
 			//element
 			setMouseCursor(elementRendererAtPoint.domNode.coreStyle.cursor);
 		}
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
+	// LOCATION METHODS
+	//////////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * called when the location's href is set
+	 */
+	private function onLocationChanged():Void
+	{
+		//TODO : update document
+	}
+	
+	/**
+	 * utils method returning the provided url
+	 * as an url relative to the document base url
+	 * @return a new url or the same if the provided
+	 * url is absolute
+	 */
+	public function getAbsoluteURL(url:String):String
+	{
+		//if the document has no base url, 
+		//return as-is
+		if (location.href == null)
+		{
+			return url;
+		}
+		
+		//if the provided url is absolute, return as-is
+		var typedURL:cocktail.core.url.URL = cocktail.core.url.URL.fromString(url);
+		if (cocktail.core.url.URL.isRelative(typedURL) == false)
+		{
+			return url;
+		}
+		
+		var documentURL:cocktail.core.url.URL = cocktail.core.url.URL.fromString(location.href);
+		
+		//concatenate document url and provided url
+		var retURL:cocktail.core.url.URL = cocktail.core.url.URL.appendURL(documentURL, typedURL);
+		
+		return cocktail.core.url.URL.toString(retURL);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
