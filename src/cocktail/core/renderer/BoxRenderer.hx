@@ -342,7 +342,8 @@ class BoxRenderer extends InvalidatingElementRenderer
 		var boxComputer:BoxStylesComputer = htmlDocument.layoutManager.getBoxStylesComputer(this);
 		
 		//do compute the box model styles
-		boxComputer.measure(coreStyle, containingBlockDimensions);
+		if (boxComputer != null)
+			boxComputer.measure(coreStyle, containingBlockDimensions);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
