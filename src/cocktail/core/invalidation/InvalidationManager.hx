@@ -431,6 +431,7 @@ class InvalidationManager
 	 */
 	private function updateDocument():Void
 	{
+try{
 		//only cascade if needed
 		if (_documentNeedsCascading == true)
 		{
@@ -646,6 +647,11 @@ class InvalidationManager
 			resizeEvent.initUIEvent(EventConstants.RESIZE, false, false, null, 0);
 			_htmlDocument.window.dispatchEvent(resizeEvent);
 		}
+}
+catch(e:Dynamic)
+{
+	trace("Error in Cocktail rendering.");
+}
 	}
 	
 	/**
